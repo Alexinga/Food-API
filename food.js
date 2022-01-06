@@ -10,7 +10,12 @@ foodContainer.addEventListener('click', getMealRecipe);
 function getMeal() {
     let searchInput = document.querySelector('#input').value.trim();
     fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${searchInput}`)
-    .then(response => response.json())
+    .then(response => {
+        if(!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        return response.json()
+    })
     .then(data => {
         if (data.meals) {
             data.meals.forEach(meal => {
@@ -22,7 +27,7 @@ function getMeal() {
         searchInput = document.querySelector('#input');
         searchInput.value = '';
     })
-    .catch(error => console.log(error));
+    .catch(error => renderApiError(error));
 }
 
 function getMealRecipe(e) {
@@ -32,7 +37,7 @@ function getMealRecipe(e) {
         fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${foodBox.dataset.id}`)
         .then(response => response.json())
         .then(data => renderMealRecipe(data.meals))
-        .catch(err => console.log(err))
+        .catch(err => renderApiError(err))
     }
 } 
 
@@ -78,4 +83,14 @@ function renderMealRecipe(meals) {
         closeRecipeBtn.parentElement.remove();
         overlay.remove();
     });
+}
+
+function renderApiError(err) {
+    const html = 
+    `
+    <div class="error">
+        <h2>Sorry, there is an error: ${err}. Try again later!</h2>
+    </div>
+    `;
+    foodContainer.insertAdjacentHTML('afterend', html);
 }
