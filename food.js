@@ -17,9 +17,17 @@ function getMeal() {
         return response.json()
     })
     .then(data => {
+        let html = ""
         if (data.meals) {
-            data.meals.forEach(meal => {
-                renderMeal(meal);
+            data.meals.forEach(meals => {
+                // renderMeal(meal);
+                html += `
+                    <div class="food-box" data-id="${meals.idMeal}">
+                        <img class="img" src="${meals.strMealThumb}">
+                        <h2>${meals.strMeal}</h2>
+                        <button class="btn">Get Recipe</button>
+                    </div>`;
+            foodContainer.innerHTML = html;
             });
         } else {
             renderError(searchInput);
@@ -41,22 +49,26 @@ function getMealRecipe(e) {
     }
 } 
 
-function renderMeal(meals) {
-    const html = `
-    <div class="food-box" data-id="${meals.idMeal}">
-        <img class="img" src="${meals.strMealThumb}">
-        <h2>${meals.strMeal}</h2>
-        <button class="btn">Get Recipe</button>
-    </div>`;
-    foodContainer.insertAdjacentHTML('beforeend', html);
-}
+// My way of doing a new method
+// function renderMeal(meals) {
+//     let html = `
+//     <div class="food-box" data-id="${meals.idMeal}">
+//         <img class="img" src="${meals.strMealThumb}">
+//         <h2>${meals.strMeal}</h2>
+//         <button class="btn">Get Recipe</button>
+//     </div>`;
+//     foodContainer.insertAdjacentHTML('beforeend', html);
+// }
+
 function renderError(input) {
-    const htmlError = `
+    let htmlError = `
     <div class="error">
         <h2>Sorry, we didn't find any meal with ${input}</h2>
     </div>`;
-    foodContainer.insertAdjacentHTML('afterend', htmlError);
+    // foodContainer.insertAdjacentHTML('afterend', htmlError);
+    foodContainer.innerHTML = htmlError;
 }
+
 function renderMealRecipe(meals) {
     //Displaying the recipe with our API. 
     const [meal] = meals;
@@ -86,11 +98,12 @@ function renderMealRecipe(meals) {
 }
 
 function renderApiError(err) {
-    const html = 
+    let html = 
     `
     <div class="error">
         <h2>Sorry, there is an error: ${err}. Try again later!</h2>
     </div>
     `;
-    foodContainer.insertAdjacentHTML('afterend', html);
+    // foodContainer.insertAdjacentHTML('afterend', html);
+    foodContainer.innerHTML = html;
 }
